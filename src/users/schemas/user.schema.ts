@@ -35,7 +35,13 @@ export class User {
   @Prop()
   updatedAt: string;
 
+
+  @Prop()
+  isDeleted: boolean;
   
+
+  @Prop()
+  deleteAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -2,9 +2,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 import { genSaltSync, hashSync ,compareSync } from 'bcryptjs';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 
 @Injectable() //provider
 export class UsersService {
@@ -12,7 +12,7 @@ export class UsersService {
   //   return 'This action adds a new user';
   // }
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>
   ) {
 
   }
@@ -60,6 +60,6 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    return this.userModel.deleteOne({_id : id});
+    return this.userModel.softDelete({_id : id});
   }
 }
