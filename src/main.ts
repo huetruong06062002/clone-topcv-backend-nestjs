@@ -13,7 +13,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
   const reflector = app.get( Reflector );
-  // app.useGlobalGuards( new JwtAuthGuard( reflector ) );    
+  app.useGlobalGuards( new JwtAuthGuard( reflector ) );    
 
 
   app.useStaticAssets(join(__dirname, '..', 'public')); //js, css, images
