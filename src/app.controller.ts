@@ -35,25 +35,6 @@ export class AppController {
     return "this.appService.getHello()" ;
   }
 
-  @Public()
-  @UseGuards(LocalAuthGuard)
-  @Post("/login")
-  handleLogin(@Request() req) {
-    return this.authService.login(req.user);
-  }
 
-  // @UseGuards(AuthGuard('local'))
-  // @Post("/login")
-  // handleLogin(@Request() req) {
-  //   return req.user;
-  // }
-
-
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 
 }
