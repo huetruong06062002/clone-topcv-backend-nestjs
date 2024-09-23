@@ -5,6 +5,7 @@ import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { TransformInterceptor } from './core/transform.interceptor';
 require("dotenv").config();
 
 async function bootstrap() {
@@ -14,7 +15,7 @@ async function bootstrap() {
   const port = configService.get('PORT');
   const reflector = app.get( Reflector );
   app.useGlobalGuards( new JwtAuthGuard( reflector ) );    
-
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   app.useStaticAssets(join(__dirname, '..', 'public')); //js, css, images
   app.setBaseViewsDir(join(__dirname, '..', 'views')); //view 
