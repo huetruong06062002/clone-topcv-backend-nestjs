@@ -34,6 +34,19 @@ export class Company {
     email: string;
   }
 
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+
+  @Prop()
+  isDeleted: boolean;
+
+
+  @Prop()
+  deletedAt: Date;
+
 
 }
 
