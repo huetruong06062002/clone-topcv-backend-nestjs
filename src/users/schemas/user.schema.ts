@@ -8,6 +8,7 @@ export class User {
   @Prop({required: true})
   email: string;
 
+  
   @Prop()
   password: string;
 
@@ -22,7 +23,7 @@ export class User {
   gender: string;
 
 
-  @Prop()
+  @Prop({required: true})
   address: string;
 
   
