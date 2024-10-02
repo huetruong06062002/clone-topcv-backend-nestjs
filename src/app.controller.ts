@@ -24,15 +24,15 @@ export class AppController {
     // return "this.appService.getHello()";
 
     return {
-      message : message
+      message: message
     }
   }
 
 
-  
+
   @Get("/vc")
   getHello1(): string {
-    return "this.appService.getHello()" ;
+    return "this.appService.getHello()";
   }
 
 
