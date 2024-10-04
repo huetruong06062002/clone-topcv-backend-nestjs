@@ -1,5 +1,5 @@
 import { UserSchema } from './../users/schemas/user.schema';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/user.interface';
@@ -82,10 +82,23 @@ export class AuthService {
   createRefeshToken = (payload) => {
     const refreshtoken = this.jwtService.sign(payload, {
       secret : this.configService.get<string>('JWT_REFRESH_TOKEN'),
-      expiresIn : ms(this.configService.get<string>('JWT_REFRESH__EXPIRE')) / 1000 // ms to second : thư viện jwt dùng second
+      expiresIn : ms(this.configService.get<string>('JWT_REFRESH__EXPIRE')) * 1000 // ms to second : thư viện jwt dùng second
     });
 
     return refreshtoken;
   }
+
+  proccessNewToken = (refreshToken: string) => {
+    try {
+       this.jwtService.verify(refreshToken , {
+      secret : this.configService.get<string>('JWT_REFRESH_TOKEN') ,
+
+      })
+
+    } catch (error) {
+      throw new BadRequestException("Refresh Token không hợp lệ. Vui lòng login");
+    }
+  }
+
 
 }
