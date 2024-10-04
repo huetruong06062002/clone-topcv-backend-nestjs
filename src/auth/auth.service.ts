@@ -6,7 +6,7 @@ import { IUser } from 'src/users/user.interface';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
-import { Response } from 'express';
+import { response, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +63,7 @@ export class AuthService {
     //set refresh token as coookies
     response.cookie('refreshToken', refresh_token, {
       httpOnly: true,
-      maxAge: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE'))   //milisecond
+      maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRE'))   //milisecond
     });
 
     return {
@@ -81,8 +81,8 @@ export class AuthService {
 
   createRefeshToken = (payload) => {
     const refreshtoken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
-      expiresIn: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE')) /1000// ms to second : thư viện jwt dùng second
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: ms(this.configService.get<string>("JWT_REFRESH_EXPIRE")) / 1000// ms to second : thư viện jwt dùng second
     });
 
     return refreshtoken;
@@ -91,7 +91,7 @@ export class AuthService {
   proccessNewToken = async (refreshToken: string, response: Response) => {
     try {
       this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
+        secret: this.configService.get<string>('JWT_REFRESH_EXPIRE'),
       })
       //todo
       
@@ -121,7 +121,7 @@ export class AuthService {
 
         response.cookie('refreshToken', refresh_token, {
           httpOnly: true,
-          maxAge: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE'))  //milisecond
+          maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRE'))  //milisecond
         });
     
         return {
@@ -142,5 +142,10 @@ export class AuthService {
     }
   }
 
+  logout= async(response: Response, user: IUser) => {
+    await this.usersService.updateUserToken("", user._id);
+    response.clearCookie("refreshToken");
+    return "ok";
+  }
 
 }

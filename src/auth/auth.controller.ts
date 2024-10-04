@@ -56,4 +56,14 @@ export class AuthController {
   }
 
 
+
+  @ResponseMessage("Logout User")
+  @Post('/logout')
+  handleLogout(  @Res({ passthrough: true }) response: Response, @User() user: IUser) { //request.user
+   
+    return this.authService.logout(response, user);
+
+  }
+
+
 }

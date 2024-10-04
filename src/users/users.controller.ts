@@ -28,8 +28,8 @@ export class UsersController {
 
   // @UseGuards(TestGuard)
   @Get()
-  findAll(@Query("page") currrentPage: string, //req.query.page
-  @Query("limit") limit: string,
+  findAll(@Query("current") currrentPage: string, //req.query.page
+  @Query("pageSize") limit: string,
   @Query() qs: string) {
     return this.usersService.findAll(+currrentPage, +limit, qs);
   }

@@ -31,8 +31,9 @@ export class CompaniesService {
     let { sort }= <{sort: any}>aqp(qs); 
     // let { sort }: {sort: any}= aqp(rq);
 
-    delete filter.page
-    delete filter.limit
+    delete filter.current
+    delete filter.pageSize
+
     let offset = (+currrentPage - 1) * (+limit);
     let defaultLimit = +limit ? +limit : 10;
 
