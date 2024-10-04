@@ -12,7 +12,7 @@ import { Response } from 'express';
 export class AuthService {
 
   constructor(
-    private usersService: UsersService, 
+    private usersService: UsersService,
     private jwtService: JwtService,
     private readonly configService: ConfigService
   ) { }
@@ -36,8 +36,8 @@ export class AuthService {
     let newUser = await this.usersService.register(user);
 
     return {
-        _id: newUser?._id,
-        createdAt: newUser?.createdAt
+      _id: newUser?._id,
+      createdAt: newUser?.createdAt
     };
 
   }
@@ -61,7 +61,7 @@ export class AuthService {
     await this.usersService.updateUserToken(refresh_token, _id);
 
     //set refresh token as coookies
-    response.cookie('refreshToken', refresh_token , {
+    response.cookie('refreshToken', refresh_token, {
       httpOnly: true,
       maxAge: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE'))   //milisecond
     });
@@ -81,19 +81,61 @@ export class AuthService {
 
   createRefeshToken = (payload) => {
     const refreshtoken = this.jwtService.sign(payload, {
-      secret : this.configService.get<string>('JWT_REFRESH_TOKEN'),
-      expiresIn : ms(this.configService.get<string>('JWT_REFRESH__EXPIRE')) * 1000 // ms to second : thư viện jwt dùng second
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
+      expiresIn: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE')) /1000// ms to second : thư viện jwt dùng second
     });
 
     return refreshtoken;
   }
 
-  proccessNewToken = (refreshToken: string) => {
+  proccessNewToken = async (refreshToken: string, response: Response) => {
     try {
-       this.jwtService.verify(refreshToken , {
-      secret : this.configService.get<string>('JWT_REFRESH_TOKEN') ,
-
+      this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
       })
+      //todo
+      
+      let user = await this.usersService.findUserByToken(refreshToken);
+
+      if(user){
+        //update refresh token
+        const { _id, name, email, role } = user;
+        const payload = {
+          sub: "token refresh",
+          iss: "from server",
+          _id,
+          name,
+          email,
+          role
+        };
+    
+        const refresh_token = this.createRefeshToken(payload);
+    
+    
+        //update user with refresh token
+    
+        await this.usersService.updateUserToken(refresh_token, _id.toString());
+    
+        //set refresh token as coookies
+        response.clearCookie("refreshToken");
+
+        response.cookie('refreshToken', refresh_token, {
+          httpOnly: true,
+          maxAge: ms(this.configService.get<string>('JWT_REFRESH__EXPIRE'))  //milisecond
+        });
+    
+        return {
+          access_token: this.jwtService.sign(payload),
+          user: {
+            _id,
+            name,
+            email,
+            role
+          }
+        };
+      }else {
+        throw new BadRequestException("Refresh Token không hợp lệ. Vui lòng login");
+      }
 
     } catch (error) {
       throw new BadRequestException("Refresh Token không hợp lệ. Vui lòng login");
