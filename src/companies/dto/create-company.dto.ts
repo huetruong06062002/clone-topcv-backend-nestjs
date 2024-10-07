@@ -26,6 +26,6 @@ export class CreateCompanyDto {
       message: 'Logo không được để trống',
     }
   )
-  logo : string;
+  logo : string;    
 
 }
