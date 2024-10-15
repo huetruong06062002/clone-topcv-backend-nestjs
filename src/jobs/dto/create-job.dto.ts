@@ -32,7 +32,7 @@ export class CreateJobDto {
 
 
   @IsNotEmpty({ message: 'location không được để trống', })
-  location: number;
+  location: string;
 
   @IsNotEmpty({ message: 'salary không được để trống', })
   salary: number;
