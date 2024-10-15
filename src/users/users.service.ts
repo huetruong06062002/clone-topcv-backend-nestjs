@@ -7,6 +7,7 @@ import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './user.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -94,7 +95,7 @@ export class UsersService {
   // Find a user by ID
   async findOne(id: string) {
     try {
-      return await this.userModel.findOne({ _id: id }).select('-password');
+      return await this.userModel.findOne({ _id: id }).select('-password').populate({path:"role", select:{name: 1, _id:1, }});
     } catch (error) {
       return "Not found user";
     }
@@ -102,7 +103,7 @@ export class UsersService {
 
   // Find a user by username (email)
   async findOneByUsername(username: string) {
-    return await this.userModel.findOne({ email: username });
+    return await this.userModel.findOne({ email: username }).populate({path:"role", select: {name:1, permissions: 1}});
   }
 
   // Validate password
@@ -117,6 +118,18 @@ export class UsersService {
 
   // Soft delete a user
   async remove(id: string, user: IUser) {
+    //admin@gmail.com
+
+
+
+    if(!mongoose.Types.ObjectId.isValid(id))
+      return `not found user`;
+
+    const foundUser = await this.userModel.findById(id);
+    if(foundUser.email == "admin@gmail.com"){
+      throw new BadRequestException("Không thể xóa tài khoản admin@gmail.com");
+    }
+
     await this.userModel.updateOne(
       { _id: id },
       {

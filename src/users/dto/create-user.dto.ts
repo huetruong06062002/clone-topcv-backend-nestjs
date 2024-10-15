@@ -31,10 +31,11 @@ export class CreateUserDto {
     gender: string;
 
     @IsNotEmpty({ message: 'Address không được để trống', })
+  
     address: string;
 
     @IsNotEmpty({ message: 'Role không được để trống', })
-    // @IsMongoId({ message: 'Role có định dạng là mongo id', })
+    @IsMongoId({ message: 'Role có định dạng là mongo id', })   
     role: string;
 
     @IsNotEmptyObject()
