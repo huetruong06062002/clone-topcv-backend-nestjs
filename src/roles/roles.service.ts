@@ -18,10 +18,9 @@ export class RolesService {
   async create(createRoleDto: CreateRoleDto, user: IUser) {
     const { name, description, isActive, permissions } = createRoleDto;
 
-    const isExits = await this.roleModel.findOne({ name });
-
-    if (isExits) {
-      throw new BadRequestException(`Role với name=${name} đã tồn tại!`);
+    const isExist = await this.roleModel.findOne({ name });
+    if (isExist) {
+      throw new BadRequestException(`Role với name="${name}" đã tồn tại!`)
     }
 
     const newRole = await this.roleModel.create({
@@ -33,9 +32,9 @@ export class RolesService {
     })
 
     return {
-      id: newRole?.id,
+      _id: newRole?._id,
       createdAt: newRole?.createdAt
-    }
+    };
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {

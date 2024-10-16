@@ -73,7 +73,8 @@ export class AuthService {
         _id,
         name,
         email,
-        role
+        role,
+
       }
     };
   }

@@ -36,7 +36,7 @@ export class CreateUserDto {
 
     @IsNotEmpty({ message: 'Role không được để trống', })
     @IsMongoId({ message: 'Role có định dạng là mongo id', })   
-    role: string;
+    role: mongoose.Schema.Types.ObjectId;
 
     @IsNotEmptyObject()
     @IsObject()

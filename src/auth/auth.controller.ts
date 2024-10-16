@@ -26,7 +26,6 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @ResponseMessage("User Login")
-
   @Post("/login")
   handleLogin(@Req() req, 
     @Res({ passthrough: true }) response: Response

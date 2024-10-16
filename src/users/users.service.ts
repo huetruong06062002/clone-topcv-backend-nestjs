@@ -103,7 +103,11 @@ export class UsersService {
 
   // Find a user by username (email)
   async findOneByUsername(username: string) {
-    return await this.userModel.findOne({ email: username }).populate({path:"role", select: {name:1, permissions: 1}});
+    return await this.userModel.findOne({ email: username }).populate({
+      path: "role",
+      select: { name: 1 }
+    });
+
   }
 
   // Validate password
