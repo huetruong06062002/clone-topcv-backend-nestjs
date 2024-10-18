@@ -11,13 +11,14 @@ export class Permission {
     name: string;
 
     @Prop()
-    path: string;
+    apiPath: string;
 
     @Prop()
     method: string;
 
     @Prop()
-    description: string;
+    module: string;
+
 
 
     @Prop({ type: Object })
