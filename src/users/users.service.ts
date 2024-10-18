@@ -8,11 +8,18 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './user.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { USER_ROLE } from 'src/databases/sample';
+import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
+
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+
+
+    @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>
+
   ) {}
 
   // Password hashing utility
@@ -31,6 +38,9 @@ export class UsersService {
       throw new BadRequestException(`Email: ${email} đã tồn tại trên hệ thống. Vui lòng sử dụng email khác.`);
     }
 
+    //fetch user role
+    const userRole = await this.roleModel.findOne({name: USER_ROLE});
+
     const hashPassword = this.hashPassword(password);
     const newRegister = await this.userModel.create({
       name,
@@ -39,7 +49,7 @@ export class UsersService {
       age,
       gender,
       address,
-      role: "USER",
+      role: userRole?._id,
     });
 
     return newRegister;
@@ -95,7 +105,7 @@ export class UsersService {
   // Find a user by ID
   async findOne(id: string) {
     try {
-      return await this.userModel.findOne({ _id: id }).select('-password').populate({path:"role", select:{name: 1, _id:1, }});
+      return await this.userModel.findOne({ _id: id }).select('-password').populate({path:"role", select:{name: 1}});
     } catch (error) {
       return "Not found user";
     }
@@ -103,7 +113,9 @@ export class UsersService {
 
   // Find a user by username (email)
   async findOneByUsername(username: string) {
-    return await this.userModel.findOne({ email: username }).populate({
+    return await this.userModel.findOne({ 
+      email: username
+   }).populate({
       path: "role",
       select: { name: 1 }
     });
@@ -153,6 +165,10 @@ export class UsersService {
 
   // Find user by refresh token
   async findUserByToken(refreshToken: string) {
-    return await this.userModel.findOne({ refreshToken });
+    return await this.userModel.findOne({ refreshToken })
+    .populate({
+      path:"role",
+      select: {name: 1}
+    });
   }
 }

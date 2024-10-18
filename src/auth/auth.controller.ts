@@ -3,14 +3,18 @@ import { Request } from 'express';
 import { AuthService } from "./auth.service";
 import { Public, ResponseMessage, User } from "src/decorator/customize";
 import { LocalAuthGuard } from "./local-auth.guard";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+
 import { RegisterUserDto } from "src/users/dto/create-user.dto";
 import { Response } from 'express';
 import { IUser } from "src/users/user.interface";
+import { RolesService } from "src/roles/roles.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor( private authService: AuthService) {
+  constructor(
+     private authService: AuthService,
+     private rolesService: RolesService,
+    ) {
 
   }
 
@@ -34,12 +38,14 @@ export class AuthController {
   }
 
   
-  @ResponseMessage("Get User information")
-
+  @ResponseMessage("Get user information")
   @Get('/account')
-  handleGetAccount(@User() user: IUser) { //request.user
-    return {user };
+  async handleGetAccount(@User() user: IUser) {
+      const temp = await this.rolesService.findOne(user.role._id) as any;
+      user.permissions = temp.permissions;
+      return { user };
   }
+s
 
 
 
