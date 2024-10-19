@@ -16,10 +16,11 @@ import { RolesModule } from './roles/roles.module';
 import { DatabasesModule } from './databases/databases.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { MailModule } from './mail/mail.module';
-
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     // MongooseModule.forRoot('mongodb+srv://truong:12345@cluster0.bwynd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
