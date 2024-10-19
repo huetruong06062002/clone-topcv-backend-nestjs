@@ -3,6 +3,8 @@ import { MailService } from './mail.service';
 import { MailController } from './mail.controller';
 import { ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { join } from 'path';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
@@ -17,13 +19,14 @@ import { MailerModule } from '@nestjs-modules/mailer';
           },
         },
 
-        // template: {
-        //   dir: join(__dirname, 'templates'),
-        //   adapter: new HandlebarsAdapter(),
-        //   options: {
-        //     strict: true,
-        //   },
-        // },
+        template: {
+          dir: join(__dirname, 'templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+        preview: configService.get<string>("EMAIL_PREVIEW") === "true" ? true: false,
       }),
       inject: [ConfigService],
     }),

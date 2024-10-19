@@ -18,7 +18,7 @@ export class MailController {
       to: "truongphse161902@fpt.edu.vn",
       from: '"Support Team" <support@example.com>', // override default from
       subject: 'Welcome to Nice App! Confirm your Email',
-      html: '<b>welcome bla bla</b>', // HTML body content
+      template: "new-job", // HTML body content
     });
   }
 
